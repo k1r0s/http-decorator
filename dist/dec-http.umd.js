@@ -12,8 +12,9 @@ var http = function (method, headers) {
     return kaopTs.beforeMethod(function (meta) {
         var _this = this;
         var _a = meta.args, url = _a[0], params = _a[1];
-        var opts = { method: method, url: config.base + "/" + url, headers: headers };
+        var opts = { method: method, headers: headers };
         opts[method === 'get' ? 'params' : 'data'] = params;
+        opts['url'] = config.base ? config.base + "/" + url : url;
         axios(opts)
             .then(function (_a) {
             var data = _a.data;
