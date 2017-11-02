@@ -32,7 +32,7 @@ someClassInstance.someMethod('localhost/resource', { id: 1 });
 You can use global configs to set a API root as follows:
 
 ```javascript
-import { config } from 'dec-http';
+import { config } from 'http-decorator';
 
 config.base = 'http://jsonplaceholder.typicode.com';
 
