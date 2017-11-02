@@ -1,13 +1,9 @@
-import axios from 'axios';
-import { beforeMethod, IAdviceSignature } from 'kaop-ts';
+const axios = require('axios');
+const { beforeMethod } = require('kaop-ts');
 
-export interface HttpGlobals {
-  base: string
-}
+const config = { base: '' };
 
-export const config: HttpGlobals = { base: '' };
-
-export const http = (method = 'get', headers?) =>
+const http = (method = 'get', headers) =>
 beforeMethod(function(meta){
   const [ url, params ] = meta.args;
   const opts = { method, headers }
@@ -23,3 +19,8 @@ beforeMethod(function(meta){
     this.next();
   })
 });
+
+module.exports = {
+  config,
+  http
+}
