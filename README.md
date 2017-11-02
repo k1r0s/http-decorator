@@ -10,9 +10,9 @@ This tiny project is also a demo about writing custom decorators using [kaop-ts]
 
 ### Get Started
 
-install: `npm install dec-http`
+install: `npm install http-decorator`
 
-import: `import { http } from 'dec-http';`
+import: `import { http } from 'http-decorator';`
 
 usage:
 

@@ -3,7 +3,7 @@ import babel from 'rollup-plugin-babel';
 export default {
   input: `index.js`,
   output: [
-		{ file: 'decHttp.js', format: 'umd' },
+		{ file: 'httpDecorator.js', format: 'umd' },
   ],
   plugins: [
     babel({
