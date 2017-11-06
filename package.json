@@ -1,6 +1,6 @@
 {
   "name": "http-decorator",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "build": "rollup -c rollup.config.js"
