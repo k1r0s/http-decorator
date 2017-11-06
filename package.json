@@ -1,11 +1,11 @@
 {
   "name": "http-decorator",
   "version": "0.1.0",
-  "description": "",
+  "description": "perform ajax request like a boss using ES7 decorators",
   "scripts": {
     "build": "rollup -c rollup.config.js"
   },
-  "main": "decHttp.js",
+  "main": "httpDecorator.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
