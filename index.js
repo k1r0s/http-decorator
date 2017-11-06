@@ -3,10 +3,10 @@ const { beforeMethod } = require('kaop-ts');
 
 const config = { base: '' };
 
-const http = (method = 'get', headers) =>
+const http = (method = 'get', headers, aditionalOpts) =>
 beforeMethod(function(meta){
   const [ url, params ] = meta.args;
-  const opts = { method, headers }
+  const opts = { method, headers, ...aditionalOpts }
   opts[method === 'get' ? 'params' : 'data'] = params;
   opts['url'] = config.base ? `${config.base}/${url}`: url;
   axios(opts)

@@ -131,6 +131,20 @@ var asyncGenerator = function () {
 
 
 
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
 
 
 
@@ -199,6 +213,7 @@ var config = { base: '' };
 var http = function http() {
   var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get';
   var headers = arguments[1];
+  var aditionalOpts = arguments[2];
   return beforeMethod(function (meta) {
     var _this = this;
 
@@ -206,7 +221,7 @@ var http = function http() {
         url = _meta$args[0],
         params = _meta$args[1];
 
-    var opts = { method: method, headers: headers };
+    var opts = _extends({ method: method, headers: headers }, aditionalOpts);
     opts[method === 'get' ? 'params' : 'data'] = params;
     opts['url'] = config.base ? config.base + '/' + url : url;
     axios(opts).then(function (_ref) {
