@@ -157,7 +157,17 @@ var _extends = Object.assign || function (target) {
 
 
 
+var objectWithoutProperties = function (obj, keys) {
+  var target = {};
 
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
 
 
 
@@ -208,37 +218,25 @@ var axios = require('axios');
 var _require = require('kaop-ts');
 var beforeMethod = _require.beforeMethod;
 
-var config = { base: '' };
-
-var http = function http() {
-  var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get';
-  var headers = arguments[1];
-  var aditionalOpts = arguments[2];
+module.exports = function (_ref) {
+  var _ref$method = _ref.method,
+      method = _ref$method === undefined ? 'get' : _ref$method,
+      options = objectWithoutProperties(_ref, ['method']);
   return beforeMethod(function (meta) {
     var _this = this;
 
-    var _meta$args = slicedToArray(meta.args, 2),
-        url = _meta$args[0],
-        params = _meta$args[1];
+    var _meta$args = slicedToArray(meta.args, 1),
+        params = _meta$args[0];
 
-    var opts = _extends({ method: method, headers: headers }, aditionalOpts);
-    opts[method === 'get' ? 'params' : 'data'] = params;
-    opts['url'] = config.base ? config.base + '/' + url : url;
-    axios(opts).then(function (_ref) {
-      var data = _ref.data;
-
-      meta.args = [url, params, null, data];
+    options[method === 'get' ? 'params' : 'data'] = params;
+    axios(_extends({ method: method }, options)).then(function (res) {
+      meta.args = [params, null, res.data];
       _this.next();
     }).catch(function (error) {
-      meta.args = [url, params, error, null];
+      meta.args = [params, error, null];
       _this.next();
     });
   });
-};
-
-module.exports = {
-  config: config,
-  http: http
 };
 
 })));

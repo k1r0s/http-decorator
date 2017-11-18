@@ -2,7 +2,9 @@
 
 axios + kaop-ts = <3
 
-This library allows to easily implement AJAX calls without messing with Async stuff
+This library allows to easily implement AJAX calls without messing with Async stuff and **with the same axios API**.
+
+You only have to include this decorator in one method, then the decorated method will be threated as then or catch for the call. Only receiving the params.
 
 This tiny project is also a demo about writing custom decorators using [kaop-ts](https://www.npmjs.com/package/kaop-ts) API
 
@@ -12,73 +14,67 @@ This tiny project is also a demo about writing custom decorators using [kaop-ts]
 
 install: `npm install http-decorator`
 
-import: `import { http } from 'http-decorator';`
+babel: `import http from 'http-decorator';`
+typescript: `import * as http from 'http-decorator';`
 
 usage:
 
 ```javascript
 class SomeClass {
-  @http()
-  public someMethod (url: string, params?: any, error?, result?): void {
+  @http({ url: 'localhost/resource'})
+  public someMethod (params?: any, error?, result?): void {
     // error should be null if request was success
   }
 }
 
-someClassInstance.someMethod('localhost/resource');
+someClassInstance.someMethod();
 // $ curl localhost/resource
-someClassInstance.someMethod('localhost/resource', { id: 1 });
+someClassInstance.someMethod({ id: 1 });
 // $ curl localhost/resource?id=1
 ```
-You can use global configs to set a API root as follows:
+You should wrap this decorator with another function to set global axios options like headers or so:
 
 ```javascript
-import { config } from 'http-decorator';
+import http from 'http-decorator';
 
-config.base = 'http://jsonplaceholder.typicode.com';
+// wrap a decorator to pass default arguments
+export const get = (resourcePath) => http({ url: `http://jsonplaceholder.typicode.com${resourcePath}` })
+export const post = (resourcePath) => http({ method: 'post', url: `http://jsonplaceholder.typicode.com${resourcePath}` })
+export const put = (resourcePath) => http({ method: 'put', url: `http://jsonplaceholder.typicode.com${resourcePath}`, headers: { whatsoever } })
 
-someClassInstance.someMethod('users');
-// $ curl http://jsonplaceholder.typicode.com/users
+...
 
-}
-```
-
-To use another HTTP verb just place it as a decorator argument:
-
-```javascript
 class SomeClass {
-  @http('put')
-  public someMethod (url: string, params?: any, error?, result?): void {
 
-  }
+  // using the wrapper decorator
+  @get('/users')
+  public someMethod (params, error, result) {}
+}
+
+someClassInstance.someMethod();
+// $ curl http://jsonplaceholder.typicode.com/users
 }
 ```
 
-### How it works -> 25 lines
+### How it works -> 17 lines
 
 ```javascript
-import axios from 'axios';
-import { beforeMethod, IAdviceSignature } from 'kaop-ts';
+const axios = require('axios');
+const { beforeMethod } = require('kaop-ts');
 
-export interface HttpGlobals {
-  base: string
-}
-
-export const config: HttpGlobals = { base: '' };
-
-export const http = (method = 'get', headers?) =>
+module.exports = ({ method = 'get', ...options }) =>
 beforeMethod(function(meta){
-  const [ url, params ] = meta.args;
-  const opts = { method, headers }
-  opts[method === 'get' ? 'params' : 'data'] = params;
-  opts['url'] = config.base ? `${config.base}/${url}`: url;
-  axios(opts)
-  .then(({ data }) => {
-    meta.args = [ url, params, null, data ];
+  const [params] = meta.args;
+  options[method === 'get' ? 'params' : 'data'] = params;
+  axios({ method, ...options })
+  .then(res => {
+    meta.args = [params, null, res.data];
     this.next();
   })
-  .catch((error) => {
-    meta.args = [ url, params, error, null];
+  .catch(error => {
+    meta.args = [params, error, null];
     this.next();
   })
 });
+
 ```

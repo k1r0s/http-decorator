@@ -1,26 +1,17 @@
 const axios = require('axios');
 const { beforeMethod } = require('kaop-ts');
 
-const config = { base: '' };
-
-const http = (method = 'get', headers, aditionalOpts) =>
+module.exports = ({ method = 'get', ...options }) =>
 beforeMethod(function(meta){
-  const [ url, params ] = meta.args;
-  const opts = { method, headers, ...aditionalOpts }
-  opts[method === 'get' ? 'params' : 'data'] = params;
-  opts['url'] = config.base ? `${config.base}/${url}`: url;
-  axios(opts)
-  .then(({ data }) => {
-    meta.args = [ url, params, null, data ];
+  const [params] = meta.args;
+  options[method === 'get' ? 'params' : 'data'] = params;
+  axios({ method, ...options })
+  .then(res => {
+    meta.args = [params, null, res.data];
     this.next();
   })
-  .catch((error) => {
-    meta.args = [ url, params, error, null];
+  .catch(error => {
+    meta.args = [params, error, null];
     this.next();
   })
 });
-
-module.exports = {
-  config,
-  http
-}
