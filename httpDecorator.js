@@ -218,25 +218,27 @@ var axios = require('axios');
 var _require = require('kaop-ts');
 var beforeMethod = _require.beforeMethod;
 
-module.exports = function (_ref) {
-  var _ref$method = _ref.method,
-      method = _ref$method === undefined ? 'get' : _ref$method,
-      options = objectWithoutProperties(_ref, ['method']);
-  return beforeMethod(function (meta) {
-    var _this = this;
+module.exports = {
+  http: function http(_ref) {
+    var _ref$method = _ref.method,
+        method = _ref$method === undefined ? 'get' : _ref$method,
+        options = objectWithoutProperties(_ref, ['method']);
+    return beforeMethod(function (meta) {
+      var _this = this;
 
-    var _meta$args = slicedToArray(meta.args, 1),
-        params = _meta$args[0];
+      var _meta$args = slicedToArray(meta.args, 1),
+          params = _meta$args[0];
 
-    options[method === 'get' ? 'params' : 'data'] = params;
-    axios(_extends({ method: method }, options)).then(function (res) {
-      meta.args = [params, null, res.data];
-      _this.next();
-    }).catch(function (error) {
-      meta.args = [params, error, null];
-      _this.next();
+      options[method === 'get' ? 'params' : 'data'] = params;
+      axios(_extends({ method: method }, options)).then(function (res) {
+        meta.args = [params, null, res.data];
+        _this.next();
+      }).catch(function (error) {
+        meta.args = [params, error, null];
+        _this.next();
+      });
     });
-  });
+  }
 };
 
 })));

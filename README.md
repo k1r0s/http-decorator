@@ -14,8 +14,7 @@ This tiny project is also a demo about writing custom decorators using [kaop-ts]
 
 install: `npm install http-decorator`
 
-babel: `import http from 'http-decorator';`
-typescript: `import * as http from 'http-decorator';`
+import: `import { http } from 'http-decorator';`
 
 usage:
 
@@ -35,7 +34,7 @@ someClassInstance.someMethod({ id: 1 });
 You should wrap this decorator with another function to set global axios options like headers or so:
 
 ```javascript
-import http from 'http-decorator';
+import { http } from 'http-decorator';
 
 // wrap a decorator to pass default arguments
 export const get = (resourcePath) => http({ url: `http://jsonplaceholder.typicode.com${resourcePath}` })
@@ -62,19 +61,21 @@ someClassInstance.someMethod();
 const axios = require('axios');
 const { beforeMethod } = require('kaop-ts');
 
-module.exports = ({ method = 'get', ...options }) =>
-beforeMethod(function(meta){
-  const [params] = meta.args;
-  options[method === 'get' ? 'params' : 'data'] = params;
-  axios({ method, ...options })
-  .then(res => {
-    meta.args = [params, null, res.data];
-    this.next();
+module.exports = {
+  http: ({ method = 'get', ...options }) =>
+  beforeMethod(function(meta){
+    const [params] = meta.args;
+    options[method === 'get' ? 'params' : 'data'] = params;
+    axios({ method, ...options })
+    .then(res => {
+      meta.args = [params, null, res.data];
+      this.next();
+    })
+    .catch(error => {
+      meta.args = [params, error, null];
+      this.next();
+    })
   })
-  .catch(error => {
-    meta.args = [params, error, null];
-    this.next();
-  })
-});
+};
 
 ```
