@@ -1,25 +1,13 @@
-import babel from 'rollup-plugin-babel';
+import commonjs from 'rollup-plugin-commonjs';
+import buble from 'rollup-plugin-buble';
 
 export default {
   input: `index.js`,
   output: [
-		{ file: 'httpDecorator.js', format: 'umd' },
+		{ file: 'httpDecorator.umd.js', name: 'httpDecorator', format: 'umd' },
   ],
   plugins: [
-    babel({
-      exclude: 'node_modules/**',
-      "presets": [
-        [
-          "env",
-          {
-            "modules": false
-          }
-        ]
-      ],
-      "plugins": [
-        "external-helpers",
-        "transform-object-rest-spread"
-      ]
-    })
+    commonjs(),
+    buble()
   ]
 }
