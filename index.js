@@ -5,7 +5,7 @@ module.exports["http"] = options =>
 beforeMethod(function(meta){
   if(!options.method) options.method = "get";
   const params = meta.args[0];
-  options[method === 'get' ? 'params' : 'data'] = params;
+  options[options.method === 'get' ? 'params' : 'data'] = params;
   axios(options)
   .then(res => {
     meta.args = [params, null, res.data];
