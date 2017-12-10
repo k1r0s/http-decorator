@@ -14,20 +14,18 @@ function createCommonjsModule(fn, module) {
 var httpDecorator = createCommonjsModule(function (module) {
 var beforeMethod = kaopTs.beforeMethod;
 
-module.exports["http"] = function (options) { return beforeMethod(function(meta){
-  var this$1 = this;
-
+module.exports["http"] = function (options) { return beforeMethod(function (meta) {
   if(!options.method) { options.method = "get"; }
   var params = meta.args[0];
   options[options.method === 'get' ? 'params' : 'data'] = params;
   axios(options)
   .then(function (res) {
     meta.args = [params, null, res.data];
-    this$1.next();
+    meta.commit();
   })
   .catch(function (error) {
     meta.args = [params, error, null];
-    this$1.next();
+    meta.commit();
   });
 }); };
 });
