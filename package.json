@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rollup -c rollup.config.js"
   },
-  "main": "httpDecorator.js",
+  "main": "httpDecorator.umd.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
