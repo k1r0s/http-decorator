@@ -1,6 +1,6 @@
 {
   "name": "http-decorator",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "perform ajax request like a boss using ES7 decorators",
   "scripts": {
     "build": "rollup -c rollup.config.js"
