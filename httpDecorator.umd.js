@@ -14,9 +14,10 @@ function createCommonjsModule(fn, module) {
 var httpDecorator = createCommonjsModule(function (module) {
 var beforeMethod = kaopTs.beforeMethod;
 
-module.exports["http"] = function (options) { return beforeMethod(function (meta) {
+module.exports["httpAdvice"] = function (meta) {
   if(!options.method) { options.method = "get"; }
-  var params = meta.args[0];
+  var ref = meta.args;
+  var params = ref[0];
   options[options.method === 'get' ? 'params' : 'data'] = params;
   axios(options)
   .then(function (res) {
@@ -27,7 +28,9 @@ module.exports["http"] = function (options) { return beforeMethod(function (meta
     meta.args = [params, error, null];
     meta.commit();
   });
-}); };
+};
+
+module.exports["http"] = function (options) { return beforeMethod(module.exports["httpAdvice"]); };
 });
 
 return httpDecorator;
